@@ -26,7 +26,7 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo apt-get update
-        sudo apt-get -y install autoconf automake bash bison bzip2 intltool \
+        sudo apt-get -y install autoconf automake bash bison bzip2 intltool autopoint \
         diffutils file flex g++ gawk gcc-multilib gettext gperf groff-base \
         libncurses-dev libexpat1-dev libslang2 libssl-dev libtool libxml-parser-perl make \
         patch perl pkg-config python sed shtool tar texinfo unzip zlib1g zlib1g-dev
