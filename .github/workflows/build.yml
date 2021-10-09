@@ -40,7 +40,7 @@ jobs:
          mkdir -p /opt/images/
          cd /opt/asus
          sudo sh build
-         sudo mv -f image/*.trx /opt/images/
+         sudo cp /opt/asus/release/src-ra-5010/image/*.trx /opt/images/
          
     - name : Upload packages
       uses: actions/upload-artifact@master
