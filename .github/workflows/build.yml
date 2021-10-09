@@ -40,7 +40,7 @@ jobs:
          mkdir -p /opt/images/
          cd /opt/asus
          sudo sh build
-         sudo mv -f images/*.trx /opt/images/
+         sudo mv -f image/*.trx /opt/images/
          
     - name : Upload packages
       uses: actions/upload-artifact@master
