@@ -34,12 +34,19 @@ jobs:
  
     - name: Build Firmware
       run: |
-         git clone -b master --depth=1 https://github.com/monw/asuswrt-xiaomi.git /opt/asus
+         git clone -b master --depth=1 https://github.com/monw/asuswrt-mt7621at.git /opt/asus
          mkdir -p /opt/brcm/
          mkdir -p /opt/buildroot-gcc463/
          mkdir -p /opt/images/
-         cd /opt/asus
-         sudo sh build
+         cd /opt/asus/tools
+         sudo tar -jxvf buildroot-gcc463_32bits.tar.bz2
+         sudo cp /opt/asus/tools/brcm/* /opt/brcm/
+         sudo cp /opt/asus/tools/buildroot-gcc463/* /opt/buildroot-gcc463/
+         export PATH=/opt/brcm/hndtools-mipsel-linux/bin:$PATH
+         export PATH=/opt/brcm/hndtools-mipsel-uclibc/bin:$PATH
+         export PATH=/opt/buildroot-gcc463/bin:$PATH
+         cd /opt/asus/release/src-ra-5010
+         make rt-newifi2
          sudo cp /opt/asus/release/src-ra-5010/image/*.trx /opt/images/
          
     - name : Upload packages
