@@ -40,8 +40,8 @@ jobs:
          mkdir -p /opt/images/
          cd /opt/asus/tools
          sudo tar -jxvf buildroot-gcc463_32bits.tar.bz2
-         sudo cp /opt/asus/tools/brcm/* /opt/brcm/
-         sudo cp /opt/asus/tools/buildroot-gcc463/* /opt/buildroot-gcc463/
+         sudo cp -r /opt/asus/tools/brcm/* /opt/brcm/
+         sudo cp -r /opt/asus/tools/buildroot-gcc463/* /opt/buildroot-gcc463/
          export PATH=/opt/brcm/hndtools-mipsel-linux/bin:$PATH
          export PATH=/opt/brcm/hndtools-mipsel-uclibc/bin:$PATH
          export PATH=/opt/buildroot-gcc463/bin:$PATH
