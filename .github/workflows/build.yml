@@ -46,7 +46,7 @@ jobs:
          export PATH=/opt/brcm/hndtools-mipsel-uclibc/bin:$PATH
          export PATH=/opt/buildroot-gcc463/bin:$PATH
          cd /opt/asus/release/src-ra-5010
-         make rt-hiwifi4
+         make rt-mir4a
          sudo cp /opt/asus/release/src-ra-5010/image/*.trx /opt/images/
          
     - name : Upload packages
