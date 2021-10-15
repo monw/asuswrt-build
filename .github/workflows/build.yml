@@ -34,7 +34,7 @@ jobs:
  
     - name: Build Firmware
       run: |
-         git clone -b first --depth=1 https://github.com/monw/asuswrt-xiaomi.git /opt/asus
+         git clone -b master --depth=1 https://github.com/240038901/asuswrt-mt7621at.git /opt/asus
          mkdir -p /opt/brcm/
          mkdir -p /opt/buildroot-gcc463/
          mkdir -p /opt/images/
@@ -46,7 +46,7 @@ jobs:
          export PATH=/opt/brcm/hndtools-mipsel-uclibc/bin:$PATH
          export PATH=/opt/buildroot-gcc463/bin:$PATH
          cd /opt/asus/release/src-ra-5010
-         make rt-mir4a
+         make rt-hiwifi4
          sudo cp /opt/asus/release/src-ra-5010/image/*.trx /opt/images/
          
     - name : Upload packages
