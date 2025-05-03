@@ -1,4 +1,4 @@
-name: Build LineageOS
+name: Build LineageOS 22.1
 
 on:
   push:
@@ -7,80 +7,56 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
+    name: Build LineageOS
     runs-on: ubuntu-22.04
+
     steps:
-    - name: Before freeing up disk space
-      run: |
-        echo "Before freeing up disk space"
-        echo "=============================================================================="
-        df -hT
-        echo "=============================================================================="
-
-    - name: "Optimize Disk Space"
-      uses: "hugoalh/disk-space-optimizer-ghaction@v0.8.0"
-      with:
-        operate_sudo: "True"
-        general_include: ".+"
-        general_exclude: |-
-          ^GCC$
-          ^G\+\+$
-          Clang
-          LLVM
-        docker_include: ".+"
-        docker_prune: "True"
-        docker_clean: "True"
-        apt_prune: "True"
-        apt_clean: "True"
-        homebrew_prune: "True"
-        homebrew_clean: "True"
-        npm_prune: "True"
-        npm_clean: "True"
-        os_swap: "True"
-
-    - name: Freeing up disk space
-      uses: easimon/maximize-build-space@master
-      with: 
-        root-reserve-mb: 2048
-        swap-size-mb: 1
-        remove-dotnet: 'true'
-        remove-android: 'true'
-        remove-haskell: 'true'
-        remove-codeql: 'true'
-        remove-docker-images: 'true'
-
-    - name: Free up disk space complete
-      run: |
-        echo "Free up disk space complete"
-        echo "=============================================================================="
-        df -hT
-        echo "=============================================================================="
-    - name: Checkout source code
+    - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Setup environment
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+
+    - name: Install build dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y bc bison build-essential ccache curl flex g++-multilib gcc-multilib git git-lfs gnupg gperf imagemagick protobuf-compiler python3-protobuf lib32readline-dev lib32z1-dev libdw-dev libelf-dev lz4 libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev
+        sudo apt-get install -y bc bison build-essential curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop openjdk-11-jdk python3 python3-pip rsync unzip x11proto-core-dev xsltproc zip zlib1g-dev
+
+    - name: Set up repo tool
+      run: |
+        mkdir -p ~/bin
         curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
         chmod a+x ~/bin/repo
-        export PATH=~/bin:$PATH
+        echo 'export PATH=~/bin:$PATH' >> ~/.bashrc
+        source ~/.bashrc
 
-    - name: Sync source code
+    - name: Sync LineageOS source
       run: |
+        mkdir -p ~/lineageos
+        cd ~/lineageos
         repo init -u https://github.com/LineageOS/android.git -b lineage-22.1
-        repo sync -j$(nproc)
+        repo sync -j$(nproc --all)
+
+    - name: Prepare environment
+      run: |
+        cd ~/lineageos
+        source build/envsetup.sh
+        lunch lineage_<device>-userdebug
 
     - name: Build LineageOS
       run: |
-        source build/envsetup.sh
-        lunch lineage_oscaro-userdebug
-        make -j$(nproc) bacon
+        cd ~/lineageos
+        make -j$(nproc --all) bacon
 
-    - name: Upload artifacts
+    - name: Upload build artifacts
       uses: softprops/action-gh-release@v2
       with:
-        name: lineage-build
-        path: out/target/product/oscaro/*.zip
+        name: lineageos-build
+        path: ~/lineageos/out/target/product/<device>/lineage-*.zip
