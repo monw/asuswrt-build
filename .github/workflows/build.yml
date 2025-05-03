@@ -81,7 +81,7 @@ jobs:
         make -j$(nproc) bacon
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: softprops/action-gh-release@v2
       with:
         name: lineage-build
         path: out/target/product/oscaro/*.zip
